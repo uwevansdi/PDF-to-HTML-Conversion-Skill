@@ -372,6 +372,30 @@ Example:
 </ol>
 ```
 
+#### Reference list formatting
+
+References are the highest concentration of link decisions in an academic document. Process each entry with the same three steps, in this order:
+
+1. Identify the title of the work being cited — the article, chapter, report, book, or resource.
+2. Apply the hyperlink to that title.
+3. Render any printed URL that follows as unlinked plain text.
+
+Apply these steps to every entry individually. A references list is not a batch operation; a decision made correctly for the first entry does not carry itself forward to the twentieth.
+
+Incorrect — the URL carries the link and the title is inert:
+
+```html
+<li>Weiss, C. H. (1979). The many meanings of research utilization. <em>Public Administration Review</em>, 39(5), 426–431. <a href="https://example.org/many-meanings">https://example.org/many-meanings</a></li>
+```
+
+Correct — the title carries the link and the printed URL remains visible as plain text:
+
+```html
+<li>Weiss, C. H. (1979). <a href="https://example.org/many-meanings">The many meanings of research utilization</a>. <em>Public Administration Review</em>, 39(5), 426–431. https://example.org/many-meanings</li>
+```
+
+When an entry has no linkable title — a personal communication, an unpublished document, or a bare database record — leave the entry unlinked rather than promoting its URL to link text.
+
 ### 12. Distinguish content issues from platform-level issues
 
 Do not attempt to solve document-level or template-level accessibility problems inside the content fragment.
@@ -427,6 +451,7 @@ Validate both the source fragment and the published result when platform access 
 - Confirm complex images have visible long descriptions or equivalent data.
 - Confirm every genuine table has a caption and accurate header associations.
 - Confirm linked text is descriptive and raw URLs are not used as the only link text.
+- Walk the references list entry by entry and confirm each one links its title rather than its URL.
 - Confirm reading order remains logical without CSS.
 - Confirm no meaning depends only on color, position, font size, or visual grouping.
 
@@ -500,7 +525,7 @@ Address, as applicable:
 - [ ] WordPress Columns wrappers, if used, contain semantic groups, have no false ARIA table or grid roles, and are nonessential in Canvas LMS.
 - [ ] Matrix content remains understandable if it falls back to one column.
 - [ ] No custom or inline CSS was added solely to reproduce a matrix layout.
-- [ ] Paper and resource titles are linked instead of raw URLs.
+- [ ] Every reference entry was checked individually—no raw URL serves as the sole or primary linked text when a title is available.
 - [ ] Footnote and endnote navigation is accessible.
 - [ ] Site-level warnings are separated from content-level findings.
 - [ ] HTML contains no document-level tags, scripts, embedded styling, Base64 images, local paths, or temporary session URLs.
@@ -550,9 +575,11 @@ WordPress Columns may improve presentation in WordPress but are not dependable i
 
 Do not put a complete chart or matrix transcription into the alt attribute. Keep alt text within 120 characters and provide the details nearby.
 
-### Linking raw URLs
+### Linking raw URLs, especially in bulk reference processing
 
 Link the relevant title. If the printed URL must remain visible, leave it as plain text.
+
+This error appears most often partway through a long references list: the first several entries are formatted correctly, then the pattern degrades into URL-as-link for the remainder. Re-check the middle and end of the list, not only the beginning, and treat each entry as its own decision.
 
 ### Attempting to fix a missing document title inside the post
 
@@ -584,4 +611,4 @@ Convert the attached PDF into an accessible HTML fragment suitable for WordPress
 
 Use portable semantic lists, quotations, callouts, figures, and genuine data tables. Apply the table decision test to every grid-like visual. Do not convert conceptual matrices, quadrants, decision frameworks, or multi-variable scenarios into tables when accurate row and column headers cannot be assigned. When Canvas is primary and spatial layout matters, extract or recreate the visual as a separate image and follow it immediately with a complete semantic equivalent using sections, headings, lists, paragraphs, or definition lists. Use Canvas-managed image URL placeholders and create an image manifest. Keep every non-empty alt attribute to 120 characters or fewer and provide visible long descriptions for complex visuals.
 
-WordPress core column classes may be used only as optional WordPress presentation enhancements; never depend on them in Canvas. Do not require custom CSS, scripts, Base64 images, or platform-specific classes for meaning. Link resource titles instead of raw URLs. Provide an optional plain-text copy of the HTML source for Canvas users, and instruct users to paste it into Canvas's HTML Editor and verify that heading tags survive after saving. Separate page-content accessibility issues from platform-level warnings such as a missing document title. For difficult scans, provide a candid success assessment and a publisher action report covering rights, proofreading, source assets, table and matrix verification, link validation, platform configuration, and final accessibility testing. Package outputs with stable filenames and repository-ready documentation when requested.
+WordPress core column classes may be used only as optional WordPress presentation enhancements; never depend on them in Canvas. Do not require custom CSS, scripts, Base64 images, or platform-specific classes for meaning. Link resource titles instead of raw URLs. In references, footnotes, and endnotes, handle every entry individually: link the title of the cited work and leave any printed URL as unlinked plain text, checking the end of a long list as carefully as the beginning. Provide an optional plain-text copy of the HTML source for Canvas users, and instruct users to paste it into Canvas's HTML Editor and verify that heading tags survive after saving. Separate page-content accessibility issues from platform-level warnings such as a missing document title. For difficult scans, provide a candid success assessment and a publisher action report covering rights, proofreading, source assets, table and matrix verification, link validation, platform configuration, and final accessibility testing. Package outputs with stable filenames and repository-ready documentation when requested.
