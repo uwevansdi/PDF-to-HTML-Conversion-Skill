@@ -50,11 +50,21 @@ read PDFs and produce file downloads (Claude, ChatGPT, or similar). Paste the co
 ("Reusable Execution Prompt") condenses the whole thing into two paragraphs. Use that when
 you want a faster, lower-token run and you trust the model to fill in the details.
 
-**Option 3 — install it as an agent skill.** Drop `SKILL.md` into your agent's skills
-directory so it loads automatically when a PDF conversion comes up. For Claude Code that is
-`.claude/skills/pdf-to-html/SKILL.md`; note that the Agent Skills format expects YAML
-frontmatter (`name` and `description`) at the top of the file, which this version does not
-yet have.
+**Option 3 — install it as an agent skill.** `SKILL.md` carries the YAML frontmatter the
+Agent Skills format expects, so it can be dropped into a skills directory and will load on
+its own when a PDF conversion comes up — no pasting required.
+
+For Claude Code, put it in one of:
+
+```
+.claude/skills/pdf-to-accessible-html/SKILL.md    # this project only
+~/.claude/skills/pdf-to-accessible-html/SKILL.md  # every project
+```
+
+Keep the directory name matching the `name` field in the frontmatter
+(`pdf-to-accessible-html`). Run `/skills` to confirm it was picked up. The same file works in
+claude.ai and the Claude API, and in other agent runtimes that read the same frontmatter
+convention.
 
 ### What to tell the agent
 

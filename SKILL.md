@@ -1,3 +1,8 @@
+---
+name: pdf-to-accessible-html
+description: Convert a PDF into a clean, accessible, semantic HTML fragment for a WordPress Custom HTML block or a Canvas LMS page, with extracted figure images, an image manifest, alt text, a validation summary, and a conversion report. Use when a user attaches or names a PDF — a scanned book chapter, article, report, or born-digital document — and wants it published as a web page, converted to HTML, made accessible, remediated, or moved into WordPress, Gutenberg, or Canvas. Also use when revising HTML that was previously converted from a PDF, when deciding whether grid-like content such as a SWOT or quadrant matrix should be a table, or when handling math equations, figures, footnotes, or reference lists during such a conversion.
+---
+
 # Skill: Convert a PDF to Accessible HTML for WordPress and Canvas LMS
 
 ## Purpose
