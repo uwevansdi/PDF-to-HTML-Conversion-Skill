@@ -16,6 +16,7 @@ Convert an attached PDF into a clean, accessible HTML fragment that can be paste
 - The target platform: WordPress, Canvas LMS, or both.
 - The site's preferred heading starting level.
 - Instructions about whether figures should be extracted as separate media files.
+- Whether the target platform can display formatted math equations. Select "my platform displays equations" when the site has a built-in equation renderer, as Canvas LMS does by default; "my platform does not display equations" when it has none, as with a standard WordPress site that has no math plugin; or "I'm not sure." An unanswered question is treated as "I'm not sure."
 - Existing HTML to revise instead of starting from the PDF.
 - A born-digital source, publisher manuscript, original figure files, or source table data for verification.
 - The requested publication scope when the PDF contains front matter, multiple chapters, appendices, or book-wide contents.
@@ -31,6 +32,8 @@ Produce:
 5. A brief validation summary identifying completed checks, unresolved ambiguities, and any accessibility warnings that belong to the WordPress theme, Canvas template, or other platform-level interface rather than the page content.
 6. For difficult scans or publisher workflows, a separate conversion report with a candid success assessment, confidence by content type, known limitations, and recommended publisher actions.
 7. When Canvas users may not have a source-code editor, an optional plain-text companion containing the identical HTML source for easy copying.
+
+When mathematical expressions are written as LaTeX source because the target platform displays equations, those expressions require no image files and no image manifest entries. Create equation images and manifest entries only for expressions represented as images.
 
 Do not paste a long HTML document into the chat when a downloadable artifact can be provided.
 
@@ -174,7 +177,76 @@ Use:
 
 Do not reproduce decorative typography, drop caps, letter spacing, all-caps styling, or visual indentation unless it communicates meaning. Do not wrap an entire paragraph in `<strong>` or `<em>` merely because the source used a display style.
 
-### 7. Convert lists semantically
+### 7. Handle mathematical expressions
+
+Determine how the target platform renders mathematics before writing any equation markup. The correct representation depends on platform capability, not on the appearance of the source.
+
+When the source contains mathematical expressions and the platform capability was not supplied, ask the user which of the three conditions applies. Ask once, before transcribing, rather than repeating the question for each expression. Treat an unanswered question as "I'm not sure."
+
+#### The platform displays equations
+
+Write mathematics directly as LaTeX source and let the platform's renderer typeset it.
+
+- Use `\( ... \)` for inline expressions.
+- Use `\[ ... \]` for display or block equations.
+- Do not extract equations as images.
+- Place a display equation in its own paragraph so it does not interrupt a sentence in the source order.
+- Retain source equation numbers as visible text near the equation.
+- Transcribe from the source expression rather than from an OCR reading of it; superscripts, subscripts, and Greek letters are common OCR failure points.
+
+Example:
+
+```html
+<p>An estimator is unbiased when \( E[\hat{\theta}] = \theta \) for every admissible parameter value.</p>
+<p>\[ \bar{x} = \frac{1}{n}\sum_{i=1}^{n} x_i \] (3)</p>
+```
+
+#### The platform does not display equations
+
+Represent display equations as images and inline expressions as portable HTML.
+
+For display or block equations:
+
+- Crop each equation from the source page as a separate image and apply the pattern described under **Handle figures and diagrams**.
+- Write alt text of 120 characters or fewer that names what the equation expresses rather than transcribing its symbols.
+- Provide a visible description immediately after the figure that states the equation in words.
+- Preserve the equation number in the caption when the source numbers it.
+
+For simple inline expressions, use HTML elements and Unicode characters instead of an image:
+
+- `<em>` for variable names.
+- `<sup>` and `<sub>` for exponents and subscripts.
+- Unicode operators and symbols such as ≥, ≤, ×, ÷, ±, −, √, π, Σ, ∞, ≈, and ≠.
+- Do not rasterize an expression that these elements can represent accurately.
+- Do not apply `<em>` to an entire expression as a styling device; it marks variables only.
+
+Examples:
+
+```html
+<p>Reject the null hypothesis when <em>p</em> ≤ 0.05.</p>
+<p>Surface area scales with <em>r</em><sup>2</sup>, while volume scales with <em>r</em><sup>3</sup>.</p>
+```
+
+```html
+<figure>
+  <img src="REPLACE-WITH-CANVAS-IMAGE-URL/equation-3.png" alt="Sample mean equals the sum of all observations divided by the number of observations.">
+  <figcaption>Equation 3. Sample mean.</figcaption>
+</figure>
+<p><strong>Equation description:</strong> The sample mean, x-bar, equals one divided by <em>n</em>, multiplied by the sum of <em>x</em> sub <em>i</em> for <em>i</em> from 1 to <em>n</em>.</p>
+```
+
+#### The capability is unknown
+
+Use the image-based approach. An image renders on every platform, while unrendered LaTeX source does not.
+
+- Apply the same figure and description pattern used when the platform cannot display equations.
+- Record in the validation summary which expressions were represented as images.
+- Note that confirming platform support for equation display would allow those expressions to be rewritten as LaTeX source for better rendering, accessibility, and reflow.
+- Keep the plain-language equation descriptions complete enough that the expressions can be rewritten later without returning to the source PDF.
+
+When both WordPress and Canvas LMS are targets and either platform cannot display equations, prefer the image-based approach for the shared fragment. Produce a separate LaTeX variant only when the user asks for a platform-specific file.
+
+### 8. Convert lists semantically
 
 Use `<ol>` when sequence, rank, priority, or numbering matters. Use `<ul>` when order does not matter.
 
@@ -183,7 +255,7 @@ Use `<ol>` when sequence, rank, priority, or numbering matters. Use `<ul>` when 
 - Do not simulate lists with bullets, hyphens, manual numbers, or `<br>` elements.
 - Use definition lists for repeated term-and-description pairs or scenario attributes.
 
-### 8. Handle figures and diagrams
+### 9. Handle figures and diagrams
 
 Extract substantive figures as separate image files when that improves clarity, fidelity, editor compatibility, or preservation of an important visual layout. For Canvas LMS, separate media is the default: upload the files through Canvas Files or the Rich Content Editor and replace the supplied placeholders with Canvas-managed URLs. Do not embed images as Base64 data URIs; Canvas may sanitize them, they enlarge the HTML, and they are difficult to edit or reuse.
 
@@ -216,7 +288,7 @@ Do not rasterize text-heavy callout boxes merely to preserve their appearance. R
 
 Optimize extracted images for legibility and reasonable file size. Crop page borders, neighboring text, page numbers, shadows, and scanner artifacts without removing substantive labels. Do not upscale a poor scan and imply that it is publication quality.
 
-### 9. Handle matrix-like, quadrant, and scenario content
+### 10. Handle matrix-like, quadrant, and scenario content
 
 Do not use a `<table>` merely because content is drawn inside a grid.
 
@@ -317,7 +389,7 @@ If one fragment must serve both platforms, prefer the Canvas-first hybrid patter
 
 For three-dimensional or unusually complex matrices, do not force every dimension into a visual grid. Use repeated self-contained scenario records as the accessible equivalent.
 
-### 10. Handle tables
+### 11. Handle tables
 
 Use `<table>` only for genuine data tables whose information depends on stable row and column relationships.
 
@@ -345,7 +417,7 @@ Do not use tables for:
 - Conceptual intersections
 - Collections of scenario records
 
-### 11. Handle links, citations, references, and notes
+### 12. Handle links, citations, references, and notes
 
 Use descriptive link text.
 
@@ -396,7 +468,7 @@ Correct — the title carries the link and the printed URL remains visible as pl
 
 When an entry has no linkable title — a personal communication, an unpublished document, or a bare database record — leave the entry unlinked rather than promoting its URL to link text.
 
-### 12. Distinguish content issues from platform-level issues
+### 13. Distinguish content issues from platform-level issues
 
 Do not attempt to solve document-level or template-level accessibility problems inside the content fragment.
 
@@ -408,7 +480,7 @@ Examples:
 
 Document these issues in the validation summary and tell the publisher or site administrator where they must be fixed. Do not insert `<html>`, `<head>`, `<title>`, `<body>`, or `<main>` into the page fragment as a workaround.
 
-### 13. Prepare files for Canvas insertion
+### 14. Prepare files for Canvas insertion
 
 Canvas users often open `.html` files in a browser and see rendered text rather than source code. Make the delivery usable without assuming a code editor.
 
@@ -418,13 +490,14 @@ Canvas users often open `.html` files in a browser and see rendered text rather 
 - Tell users to paste the source into Canvas's HTML Editor, not the visual Rich Content Editor.
 - After saving, reopen the HTML Editor and confirm that `<h2>`, `<h3>`, lists, figures, and image URLs remain.
 - If Canvas reports that the page has no headings, verify that actual heading tags survived; bold paragraphs are not headings.
+- Canvas LMS includes an equation renderer by default, so LaTeX math notation is normally the preferred approach for Canvas deployments. Confirm the capability with the user before relying on it, and after saving confirm that equations render as mathematics rather than as raw delimiters.
 - The Canvas page title normally supplies the page-level `<h1>`, so the fragment should usually begin with `<h2>`.
 - A missing document `<title>` warning is a site or template issue and cannot be repaired inside a page-content fragment.
 - Keep ordinary `<img src="...">` references. Do not use Base64 image data, scripts, `<style>`, document-level tags, or unsupported embedded objects.
 
 On macOS, users can reveal source with a code editor such as Visual Studio Code, BBEdit, or CotEditor. TextEdit can also display source when “Display HTML files as HTML code instead of formatted text” is enabled. The plain-text companion is the most reliable no-configuration option.
 
-### 14. Validate the HTML
+### 15. Validate the HTML
 
 Validate both the source fragment and the published result when platform access is available.
 
@@ -517,6 +590,7 @@ Address, as applicable:
 - [ ] All substantive figures, boxes, genuine tables, and matrices were represented.
 - [ ] Every non-empty alt attribute is 120 characters or fewer.
 - [ ] Complex figures have visible descriptions.
+- [ ] Mathematical expressions match the confirmed platform capability (LaTeX source or image with text equivalent).
 - [ ] Every genuine table has a caption and accurate header relationships.
 - [ ] Every grid-like visual passed the table decision test.
 - [ ] Non-tabular matrices use complete cell headings and logical source order.
@@ -580,6 +654,10 @@ Do not put a complete chart or matrix transcription into the alt attribute. Keep
 Link the relevant title. If the printed URL must remain visible, leave it as plain text.
 
 This error appears most often partway through a long references list: the first several entries are formatted correctly, then the pattern degrades into URL-as-link for the remainder. Re-check the middle and end of the list, not only the beginning, and treat each entry as its own decision.
+
+### Rendering LaTeX on a platform that cannot display it
+
+Without an equation renderer, LaTeX source appears to readers as literal backslashes, braces, and delimiters in the middle of otherwise finished prose. Confirm the platform capability before writing LaTeX, and use equation images with visible text equivalents whenever the capability is unknown. After publishing, view the page and confirm that expressions render as mathematics rather than as plain text.
 
 ### Attempting to fix a missing document title inside the post
 
